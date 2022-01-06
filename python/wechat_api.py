@@ -41,7 +41,7 @@ class WeChatAPI():
         self.send_api = 'https://qyapi.weixin.qq.com/cgi-bin/message/send?' + f'access_token={self.access_token}'
     
     # 文本消息发送函数，传入要发送的文本消息标题，正文; 应用id以及推送的用户有默认值，需要时可以传入参数
-    def send_text_message(self, title, text, agent_id=AGENT_ID, touser="HanFangYuan"):
+    def send_text_message(self, title, text, agent_id=AGENT_ID, touser="@all"):
         # 消息体字典转换为json字符串
         data = json.dumps({
             "touser" : touser,
