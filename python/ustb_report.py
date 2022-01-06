@@ -7,8 +7,14 @@ import requests
 from apscheduler.schedulers.blocking import BlockingScheduler
 from wechat_api import wechat_api
 
-
-url='https://isport.ustb.edu.cn/app.RSPWxClient/index.jsp'
+config_parser = configparser.ConfigParser()
+config_parser.read(filenames='config.ini')
+url = config_parser['ustb_report']['url']
+debug = bool(int(config_parser['ustb_report']['debug']))
+random_delay = bool(int(config_parser['ustb_report']['random_delay']))
+max_retry = int(config_parser['ustb_report']['max_retry'])
+max_delay = int(config_parser['ustb_report']['max_delay'])
+retry_interval = int(config_parser['ustb_report']['retry_interval'])
 
 def str_to_dict(data_str):
     data_list = data_str.split('&')
@@ -44,12 +50,6 @@ def ping():
         if retry_number >= max_retry:
             wechat_api.send_text_message(f"{user_dict['name']} ping", 'ping failed')
         
-
-random_delay = True
-max_retry = 5
-max_delay = 5 # minutes
-retry_interval = 20 # seconds
-debug = True
 
 def one_submit(user_dict):
     if random_delay:
@@ -88,5 +88,5 @@ if __name__ == '__main__':
         retry_interval = 2
     scheduler = BlockingScheduler(timezone="Asia/Shanghai")
     scheduler.add_job(ping, 'cron', minute='*/10')
-    scheduler.add_job(submit, 'cron', hour=21, minute=38)
+    scheduler.add_job(submit, 'cron', hour=6, minute=0)
     scheduler.start()
