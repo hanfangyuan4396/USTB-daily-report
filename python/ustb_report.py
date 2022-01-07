@@ -43,8 +43,9 @@ def ping():
             try:
                 requests.get(url, headers={'Cookie':user_dict['cookie']})
                 break
-            except:
+            except Exception as e:
                 print('Ping failed.')
+                print('excetion:', e)
                 retry_number += 1
         
         if retry_number >= max_retry:
@@ -58,11 +59,13 @@ def one_submit(user_dict):
         time.sleep(delay_minutes * 60)
     try:
         response = requests.post(url, headers={'Cookie':user_dict['cookie']}, data=user_dict['data'])
+        print('submit_response:', response.text)
         message = re.search(r'.*"message":\s*"(?P<message>.*?)"', response.text).group('message')
         print(message)
         return message == '当天已上报You have submitted today.'
-    except:
+    except Exception as e:
         print('Submit failed.')
+        print('exception:', e)
         return False
 
 def submit():
@@ -86,7 +89,10 @@ if __name__ == '__main__':
     if debug:
         random_delay = False
         retry_interval = 2
-    scheduler = BlockingScheduler(timezone="Asia/Shanghai")
-    scheduler.add_job(ping, 'cron', minute='*/10')
-    scheduler.add_job(submit, 'cron', hour=6, minute=0)
-    scheduler.start()
+        ping()
+        submit()
+    else:
+        scheduler = BlockingScheduler(timezone="Asia/Shanghai")
+        scheduler.add_job(ping, 'cron', minute='*/10')
+        scheduler.add_job(submit, 'cron', hour=6, minute=0)
+        scheduler.start()
