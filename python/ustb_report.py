@@ -9,7 +9,8 @@ from wechat_api import wechat_api
 
 config_parser = configparser.ConfigParser()
 config_parser.read(filenames='config.ini')
-url = config_parser['ustb_report']['url']
+submit_url = config_parser['ustb_report']['submit_url']
+ping_url = config_parser['ustb_report']['ping_url']
 debug = bool(int(config_parser['ustb_report']['debug']))
 random_delay = bool(int(config_parser['ustb_report']['random_delay']))
 max_retry = int(config_parser['ustb_report']['max_retry'])
@@ -41,7 +42,10 @@ def ping():
         retry_number = 0
         while retry_number < max_retry:
             try:
-                requests.get(url, headers={'Cookie':user_dict['cookie']})
+                response = requests.get(ping_url, headers={'Cookie':user_dict['cookie']})
+                match_result = re.search('体温', response.text)
+                if match_result is None:
+                    wechat_api.send_text_message(f"{user_dict['name']} ping", 'session过期')
                 break
             except Exception as e:
                 print('Ping failed.')
@@ -49,8 +53,7 @@ def ping():
                 retry_number += 1
         
         if retry_number >= max_retry:
-            wechat_api.send_text_message(f"{user_dict['name']} ping", 'ping failed')
-        
+            wechat_api.send_text_message(f"{user_dict['name']} ping", 'connect failed')
 
 def one_submit(user_dict):
     if random_delay:
@@ -58,7 +61,7 @@ def one_submit(user_dict):
         print(f'Delay for {delay_minutes} minutes.')
         time.sleep(delay_minutes * 60)
     try:
-        response = requests.post(url, headers={'Cookie':user_dict['cookie']}, data=user_dict['data'])
+        response = requests.post(submit_url, headers={'Cookie':user_dict['cookie']}, data=user_dict['data'])
         print('submit_response:', response.text)
         message = re.search(r'.*"message":\s*"(?P<message>.*?)"', response.text).group('message')
         print(message)

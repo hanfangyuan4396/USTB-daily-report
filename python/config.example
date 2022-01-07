@@ -7,7 +7,8 @@ corporation_secret = xxx
 agent_id = 1000002
 
 [ustb_report]
-url = https://isport.ustb.edu.cn/app.RSPWxClient/index.jsp
+submit_url = https://isport.ustb.edu.cn/app.RSPWxClient/index.jsp
+ping_url = https://isport.ustb.edu.cn/app.RSPWxClient/index.jsp?m=yqinfo&c=index&a=init
 debug = 0
 random_delay = 1
 max_retry = 5
