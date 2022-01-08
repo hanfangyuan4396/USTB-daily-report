@@ -86,7 +86,7 @@ def submit():
                 retry_number += 1
 
         if retry_number >= max_retry:
-            wechat_api.send_text_message('submit', 'submit failed')
+            wechat_api.send_text_message(f"{user_dict['name']} submit", 'submit failed')
 
 if __name__ == '__main__':
     if debug:
