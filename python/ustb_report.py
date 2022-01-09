@@ -1,4 +1,5 @@
 import re
+import sys
 import time
 import datetime
 import random
@@ -11,7 +12,7 @@ config_parser = configparser.ConfigParser()
 config_parser.read(filenames='config.ini')
 submit_url = config_parser['ustb_report']['submit_url']
 ping_url = config_parser['ustb_report']['ping_url']
-debug = bool(int(config_parser['ustb_report']['debug']))
+debug = bool(int(sys.argv[1]))
 random_delay = bool(int(config_parser['ustb_report']['random_delay']))
 max_retry = int(config_parser['ustb_report']['max_retry'])
 max_delay = int(config_parser['ustb_report']['max_delay'])
@@ -45,7 +46,7 @@ def ping():
                 response = requests.get(ping_url, headers={'Cookie':user_dict['cookie']})
                 match_result = re.search('体温', response.text)
                 if match_result is None:
-                    wechat_api.send_text_message(f"{user_dict['name']} ping", 'session过期')
+                    wechat_api.send_text_message(f"{user_dict['name']} ping", f'session过期或响应异常\n{response.text}')
                 break
             except Exception as e:
                 print('Ping failed.')
@@ -97,5 +98,5 @@ if __name__ == '__main__':
     else:
         scheduler = BlockingScheduler(timezone="Asia/Shanghai")
         scheduler.add_job(ping, 'cron', minute='*/10')
-        scheduler.add_job(submit, 'cron', hour=6, minute=0)
+        scheduler.add_job(submit, 'cron', hour=11, minute=0)
         scheduler.start()
