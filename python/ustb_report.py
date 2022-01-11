@@ -26,6 +26,9 @@ def str_to_dict(data_str):
         data_dict[key] = vaule
     return data_dict
 
+def add_time(s):
+    return f"{datetime.datetime.now().strftime('%m-%d %H:%M:%S')} {s}"
+
 def get_user_list():
     config_parser = configparser.ConfigParser()
     config_parser.read(filenames='users.ini', encoding='utf-8')
@@ -77,7 +80,7 @@ def submit():
         retry_number = 0
         while retry_number < max_retry:
             if one_submit(user_dict):
-                wechat_api.send_text_message(f"{user_dict['name']} submit", f'{datetime.datetime.now()} submit succeeded')
+                wechat_api.send_text_message(f"{user_dict['name']} submit", f"{add_time('自动上报成功')}")
                 break
             else:
                 global random_delay
@@ -87,7 +90,7 @@ def submit():
                 retry_number += 1
 
         if retry_number >= max_retry:
-            wechat_api.send_text_message(f"{user_dict['name']} submit", 'submit failed')
+            wechat_api.send_text_message(f"{user_dict['name']} submit", f"{add_time('自动上报失败')}")
 
 if __name__ == '__main__':
     if debug:
@@ -98,5 +101,5 @@ if __name__ == '__main__':
     else:
         scheduler = BlockingScheduler(timezone="Asia/Shanghai")
         scheduler.add_job(ping, 'cron', minute='*/10')
-        scheduler.add_job(submit, 'cron', hour=11, minute=0)
+        scheduler.add_job(submit, 'cron', hour=10, minute=0)
         scheduler.start()
