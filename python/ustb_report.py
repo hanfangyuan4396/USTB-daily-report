@@ -77,6 +77,9 @@ def one_submit(user_dict):
 
 def submit():
     for user_dict in get_user_list():
+        # data中有null标志的不用填报
+        if user_dict['data'].get('null') == 'null':
+            continue
         retry_number = 0
         while retry_number < max_retry:
             if one_submit(user_dict):
@@ -92,14 +95,28 @@ def submit():
         if retry_number >= max_retry:
             wechat_api.send_text_message(f"{user_dict['name']} submit", f"{add_time('自动上报失败')}", touser="HanFangYuan")
 
+def reminder():
+    for user_dict in get_user_list():
+        report_link = f'<a href="{ping_url}">点击填写平安报</a>'
+        response = requests.get(ping_url, headers={'Cookie': user_dict['cookie']})
+        disabled_list = re.findall('disabled', response.text)
+        # 测试发现，如果上报了，会有100多个带有disabled标志的标签
+        # 但是session过期也匹配不到，也会提醒
+        if len(disabled_list) < 50:
+            wechat_api.send_text_message(f"{user_dict['name']} reminder", f"{add_time('今天还未上报')}\n{report_link}")
+        # else:
+        #     wechat_api.send_text_message(f"{user_dict['name']} reminder", f"{add_time('今天已经上报')}", touser="HanFangYuan")
+
 if __name__ == '__main__':
     if debug:
         random_delay = False
         retry_interval = 2
         ping()
         submit()
+        reminder()
     else:
         scheduler = BlockingScheduler(timezone="Asia/Shanghai")
         scheduler.add_job(ping, 'cron', minute='*/10')
-        scheduler.add_job(submit, 'cron', hour=10, minute=0)
+        scheduler.add_job(submit, 'cron', hour=9, minute=30)
+        scheduler.add_job(reminder, 'cron', hour=10, minute=0)
         scheduler.start()
