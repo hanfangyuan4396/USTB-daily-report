@@ -49,7 +49,7 @@ def ping():
                 response = requests.get(ping_url, headers={'Cookie':user_dict['cookie']})
                 match_result = re.search('体温', response.text)
                 if match_result is None:
-                    wechat_api.send_text_message(f"{user_dict['name']} ping", f'session过期或响应异常\n{response.text}')
+                    wechat_api.send_text_message(f"{user_dict['name']} ping", f'session过期或响应异常\n{response.text}', touser="HanFangYuan")
                 break
             except Exception as e:
                 print('Ping failed.')
@@ -57,7 +57,7 @@ def ping():
                 retry_number += 1
         
         if retry_number >= max_retry:
-            wechat_api.send_text_message(f"{user_dict['name']} ping", 'connect failed')
+            wechat_api.send_text_message(f"{user_dict['name']} ping", 'connect failed', touser="HanFangYuan")
 
 def one_submit(user_dict):
     if random_delay:
@@ -80,7 +80,7 @@ def submit():
         retry_number = 0
         while retry_number < max_retry:
             if one_submit(user_dict):
-                wechat_api.send_text_message(f"{user_dict['name']} submit", f"{add_time('自动上报成功')}")
+                wechat_api.send_text_message(f"{user_dict['name']} submit", f"{add_time('自动上报成功')}", touser="HanFangYuan")
                 break
             else:
                 global random_delay
@@ -90,7 +90,7 @@ def submit():
                 retry_number += 1
 
         if retry_number >= max_retry:
-            wechat_api.send_text_message(f"{user_dict['name']} submit", f"{add_time('自动上报失败')}")
+            wechat_api.send_text_message(f"{user_dict['name']} submit", f"{add_time('自动上报失败')}", touser="HanFangYuan")
 
 if __name__ == '__main__':
     if debug:
