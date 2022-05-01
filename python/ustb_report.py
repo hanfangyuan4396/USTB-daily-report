@@ -84,7 +84,7 @@ def submit():
                 break
             else:
                 global random_delay
-                random_delay = False
+                # random_delay = False # 由于是全局变量，更改为False之后，就不能改回来了
                 print(f'Retry will be run after {retry_interval} seconds.')
                 time.sleep(retry_interval)
                 retry_number += 1
