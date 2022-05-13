@@ -43,6 +43,8 @@ def get_user_list():
 
 def ping():
     for user_dict in get_user_list():
+        if user_dict['name'] == 'AQiuachooo':
+            continue
         retry_number = 0
         while retry_number < max_retry:
             try:
@@ -116,7 +118,7 @@ if __name__ == '__main__':
         reminder()
     else:
         scheduler = BlockingScheduler(timezone="Asia/Shanghai")
-        scheduler.add_job(ping, 'cron', minute='*/10')
-        scheduler.add_job(submit, 'cron', hour=9, minute=30)
+        #scheduler.add_job(ping, 'cron', minute='*/10')
+        #scheduler.add_job(submit, 'cron', hour=9, minute=30)
         scheduler.add_job(reminder, 'cron', hour=10, minute=0)
         scheduler.start()
