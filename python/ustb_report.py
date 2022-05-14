@@ -120,5 +120,5 @@ if __name__ == '__main__':
         scheduler = BlockingScheduler(timezone="Asia/Shanghai")
         #scheduler.add_job(ping, 'cron', minute='*/10')
         #scheduler.add_job(submit, 'cron', hour=9, minute=30)
-        scheduler.add_job(reminder, 'cron', hour=10, minute=0)
+        scheduler.add_job(reminder, 'cron', hour=9, minute=0)
         scheduler.start()
