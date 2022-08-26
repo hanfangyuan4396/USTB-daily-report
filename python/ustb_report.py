@@ -69,9 +69,8 @@ def one_submit(user_dict):
     try:
         response = requests.post(submit_url, headers={'Cookie':user_dict['cookie']}, data=user_dict['data'])
         print('submit_response:', response.text)
-        message = re.search(r'.*"message":\s*"(?P<message>.*?)"', response.text).group('message')
-        print(message)
-        return message == '当天已上报You have submitted today.'
+        #message = re.search(r'.*"message":\s*"(?P<message>.*?)"', response.text).group('message')
+        return response.text == ''
     except Exception as e:
         print('Submit failed.')
         print('exception:', e)
@@ -115,10 +114,10 @@ if __name__ == '__main__':
         retry_interval = 2
         ping()
         submit()
-        reminder()
+        #reminder()
     else:
         scheduler = BlockingScheduler(timezone="Asia/Shanghai")
-        #scheduler.add_job(ping, 'cron', minute='*/10')
-        #scheduler.add_job(submit, 'cron', hour=9, minute=30)
-        scheduler.add_job(reminder, 'cron', hour=9, minute=0)
+        scheduler.add_job(ping, 'cron', minute='*/10')
+        scheduler.add_job(submit, 'cron', hour=9, minute=0)
+        #scheduler.add_job(reminder, 'cron', hour=9, minute=0)
         scheduler.start()
