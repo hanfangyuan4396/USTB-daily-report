@@ -69,8 +69,9 @@ def one_submit(user_dict):
     try:
         response = requests.post(submit_url, headers={'Cookie':user_dict['cookie']}, data=user_dict['data'])
         print('submit_response:', response.text)
-        #message = re.search(r'.*"message":\s*"(?P<message>.*?)"', response.text).group('message')
-        return response.text == ''
+        message = re.search(r'.*"message":\s*"(?P<message>.*?)"', response.text).group('message')
+        print(message)
+        return message == '当天已上报You have submitted today'
     except Exception as e:
         print('Submit failed.')
         print('exception:', e)
@@ -94,7 +95,8 @@ def submit():
                 retry_number += 1
 
         if retry_number >= max_retry:
-            wechat_api.send_text_message(f"{user_dict['name']} submit", f"{add_time('自动上报失败')}", touser="HanFangYuan")
+            report_link = f'<a href="{ping_url}">点击填写平安报</a>'
+            wechat_api.send_text_message(f"{user_dict['name']} submit", f"{add_time('自动上报失败')}\n{report_link}", touser="HanFangYuan")
 
 def reminder():
     for user_dict in get_user_list():
