@@ -112,6 +112,7 @@ def reminder():
 
 if __name__ == '__main__':
     if debug:
+        wechat_api.send_text_message(f"GitHub actions", f"{add_time('开始测试')}", touser="HanFangYuan")
         random_delay = False
         retry_interval = 2
         ping()
@@ -122,4 +123,6 @@ if __name__ == '__main__':
         scheduler.add_job(ping, 'cron', minute='*/10')
         scheduler.add_job(submit, 'cron', hour=7, minute=0)
         #scheduler.add_job(reminder, 'cron', hour=9, minute=0)
+        print('开启定时任务')
+        wechat_api.send_text_message(f"GitHub actions", f"{add_time('开启定时任务')}", touser="HanFangYuan")
         scheduler.start()
