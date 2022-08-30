@@ -23,7 +23,7 @@ jobs:
         uses: garygrossgarten/github-action-ssh@v0.6.3
         with:
           # Command to execute on the remote server.
-          command: cd ~/USTB-daily-report/python && ./stop_ustb_report.sh && ./start_ustb_report.sh
+          command: cd ~/USTB-daily-report/python && git pull && ./stop_ustb_report.sh && ./start_ustb_report.sh
           # Hostname or IP address of the server.
           host: ${{ secrets.SERVER_HOST }} # optional, default is localhost
           # Username for authentication.
