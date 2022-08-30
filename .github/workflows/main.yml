@@ -29,4 +29,5 @@ jobs:
           # Username for authentication.
           username: ${{ secrets.USER_NAME }} # optional
           # File Location or string that contains a private key for either key-based or hostbased user authentication (OpenSSH format)
-          privateKey: ${{ secrets.SERVER_PRIVATE_KEY }}# optional
+          # privateKey: ${{ secrets.SERVER_PRIVATE_KEY }} # optional
+          password:  ${{ secrets.SERVER_PASSWORD }}
