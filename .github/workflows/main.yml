@@ -23,7 +23,7 @@ jobs:
         uses: garygrossgarten/github-action-ssh@v0.6.3
         with:
           # Command to execute on the remote server.
-          command: ./deploy_ustb_report.sh && sleep 100
+          command: ./deploy.sh
           # Hostname or IP address of the server.
           host: ${{ secrets.SERVER_HOST }} # optional, default is localhost
           # Username for authentication.
