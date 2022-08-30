@@ -71,7 +71,7 @@ def one_submit(user_dict):
         print('submit_response:', response.text)
         message = re.search(r'.*"message":\s*"(?P<message>.*?)"', response.text).group('message')
         print(message)
-        return message == '当天已上报You have submitted today'
+        return message == '当天已上报You have submitted today.'
     except Exception as e:
         print('Submit failed.')
         print('exception:', e)
